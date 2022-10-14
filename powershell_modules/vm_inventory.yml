@@ -1,5 +1,6 @@
 resource_pool: 'IGReporting'
-domain: dom12345
+vi_server: 'vlabw1vc.nqeng.lab'
+domain: 'dom12345'
 subnet_CIDR: '/22' 
 dns_servers: 
   - 10.204.2.43
