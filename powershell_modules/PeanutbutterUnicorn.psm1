@@ -33,61 +33,88 @@ function Join-Vlab {
 
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [Switch] $SaveCredentials,
-        [Parameter(Mandatory=$false)]
+        [Parameter(Mandatory = $false)]
         [Switch] $SkipVPNTest
     )
 
     #  ----- validate expected vars and conditions -----
-
-    if($null -eq $ViServerAddress){
+    Write-Debug "VlabCredentialsFilePath: '$($VlabCredentialsFilePath)'"
+    Write-Debug "ViServerAddress: '$($ViServerAddress)'"
+    if ($null -eq $ViServerAddress) {
         # if NewVIServer is set and the connection is successful, this new value will be saved to $PROFILE
         $NewVIServer = Read-Host -Prompt "the `$ViServer variable is not available. Please enter the url for the Provo Vlab [Enter to accept vlabw1vc.nqeng.lab]. This new variable will be saved to the current profile"
-        if ($NewVIServer.Length -eq 0){
+        if ($NewVIServer.Length -eq 0) {
             $NewVIServer = 'vlabw1vc.nqeng.lab'
         }
+        $ViServerAddress = $NewVIServer
     }
 
-    if (!$SkipVPNTest.IsPresent){
-        Test-Connection $Vlab -OutVariable Connected
-        if($Connected.Status -ne "Success"){
-            Write-Error "Cannot reach $($Vlab). Are you connected to the proper VPN?"
+    if ( !$SkipVPNTest.IsPresent ) {
+
+        Write-Verbose "Testing connection to $($vlabViServerAddress)..."
+        Test-Connection $ViServerAddress -OutVariable Connected
+        if ($Connected.Status -ne "Success") {
+            Write-Error "Cannot reach $($ViServerAddress). Are you connected to the proper VPN?"
+            Write-Output "Test-Connection output:`n$($Connected)"
             return
-    }   }
+        }
+        else {
+            Write-Verbose "Validated Connection to $($ViServerAddress)."
+            if($DebugPreference -eq "Continue"){
+                # for some dumb reason you can `write-output $connected`, but not `write-debug $connected`
+                $Connected | Format-Table -AutoSize -Property *
+            }    
+        }
+    }
+    else {
+        Write-Verbose "Skipping vpn test"
+    }
     
     #  ---------- Meat of the function ----------
-    $CredsAvailable = Test-Path -PathType Leaf $VlabCredentialsFilePath
+    $CredsAvailable = (Test-Path -PathType Leaf $VlabCredentialsFilePath && `
+            (Split-Path -Path $VlabCredentialsFilePath -Extension) -like "*.cred")
+    Write-Debug "`$CredsAvailable: $($CredsAvailable)"
+    Write-Debug "`$SaveCredentials.IsPresent: $($SaveCredentials.IsPresent)"
 
-    if( !$CredsAvailable -or $SaveCredentials.IsPresent ){
+    if ( !$CredsAvailable -or $SaveCredentials.IsPresent ) {
+        Write-Verbose "Requesting new credentials from user..."
         $Credentials = Get-Credential
         # Save Credentials only once the sign-in has been succeeded.
-    }else {
+    }
+    else {
+        Write-Verbose "Importing credentials from `"$($VlabCredentialsFilePath)`""
         $Credentials = Import-Clixml $VlabCredentialsFilePath
     }
+    Write-Debug $Credentials
     $ErrorActionPreference = 'Stop'
-    Set-PowerCLIConfiguration -InvalidCertificateAction Ignore
+    Write-Verbose "Setting Powercliconfiguration's InvalidCertificateAction to 'ignore'..."
+    Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
     try {  
-        if ($Null -ne $NewVIServer){
+        if ($Null -ne $NewVIServer) {
             Connect-VIServer -Server $NewVIServer -Credential $Credentials
-        }else{
+        }
+        else {
             Connect-VIServer -Server $ViServerAddress -Credential $Credentials
         }
         
-    }catch [ System.Management.Automation.ValidationMetadataException ] {
+    }
+    catch [ System.Management.Automation.ValidationMetadataException ] {
         $ThisError = $Error[0]
         Write-Error "The provided URL for the VI server is invalid.`n$($ThisError)"
-    }catch {
+    }
+    catch {
         Write-Output "Failed to connect to $($ViServerAddress).`n$($Error[0])"
     }
 
     #  ------ Save new variables if needed ------
-    if ($global:DefaultVIServer.Name -eq $NewVIServer) {
+    if ($global:DefaultVIServer.Name -eq $NewVIServer && $null -ne $NewVIServer) {
         Set-Variable -Scope global -Name "ViServerAddress" -Value $NewVIServer
-        "`$ViServerAddress = $($NewVIServer)" | Tee-Object $PROFILE -Append
+        "`$ViServerAddress = '$($NewVIServer)'" | Tee-Object $PROFILE -Append
     }
-    if ($SaveCredentials.IsPresent && $global:DefaultVIServer.Name -eq $ViServerAddress){
-        Export-Clixml -InputObject $Credentials -Path -Force
+    if ($SaveCredentials.IsPresent && $global:DefaultVIServer.Name -eq $ViServerAddress) {
+        Export-Clixml -InputObject $Credentials -Path "$($HOME)\$($Credentials.Username).cred" -Force
     }
     # TODO(Jonathan) write pester test for Join-Vlab
 }
