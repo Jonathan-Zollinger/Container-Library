@@ -14,6 +14,7 @@ Describe 'Join-Vlab' {
     Context 'Authenticating with vlab' {
 
         BeforeEach {
+            #  ----------- obtain credentials -----------
             Write-Verbose "looking for available *.cred file in $($PWD)..."
             if ( -not ( Get-ChildItem -Recurse "*.cred" | Test-Path -PathType Leaf ) ) {
                 Get-Credential -Message "please enter valid credentials to use in tests:" |
@@ -22,7 +23,9 @@ Describe 'Join-Vlab' {
             $tempCredentials = (Get-ChildItem -Recurse "*.cred")[0]
             Write-Verbose "Using $($tempCredentials) for this test's credentials."
 
+            #  -------- save variables globally --------
             @{'ViServerAddress'           = 'vlabw1vc.nqeng.lab'
+            'BadViServerAddress' = 'https://MicroFocus.com'
                 'VlabCredentialsFilePath' = $tempCredentials 
             }.GetEnumerator() | ForEach-Object { 
                 Set-Variable -Name $_.Key -Value $_.Value -Scope global -Visibility Public
@@ -31,11 +34,16 @@ Describe 'Join-Vlab' {
 
 
         it 'Connects to the vlab server with global variables' {
-            Write-Debug ([string]::Format("Available Variables: `n`t{0}`n`t{1}", 
-                "VlabCredentialsFilePath: '$($VlabCredentialsFilePath)'",
-                "ViServerAddress: '$($ViServerAddress)'"))
+
             Join-Vlab
             $global:DefaultVIServer.Name | Should -Be $ViServerAddress
+        }
+
+        it 'Connects to the vlab without prepped global variables' {
+            Write-Debug ([string]::Format("Available Variables: `n`t{0}`n`t{1}", 
+                    "VlabCredentialsFilePath: '$($VlabCredentialsFilePath)'",
+                    "ViServerAddress: '$($ViServerAddress)'"))
+
         }
     }
 }
