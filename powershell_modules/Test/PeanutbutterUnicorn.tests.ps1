@@ -11,7 +11,7 @@ using module "../PeanutbutterUnicorn.psm1"
 
 Describe 'Join-Vlab' {
 
-    Context 'When input global vars are kosher' {
+    Context 'Authenticating with vlab' {
 
         BeforeEach {
             Write-Verbose "looking for available *.cred file in $($PWD)..."
@@ -30,7 +30,7 @@ Describe 'Join-Vlab' {
         }
 
 
-        it 'Connects to the vlab server' {
+        it 'Connects to the vlab server with global variables' {
             Write-Debug ([string]::Format("Available Variables: `n`t{0}`n`t{1}", 
                 "VlabCredentialsFilePath: '$($VlabCredentialsFilePath)'",
                 "ViServerAddress: '$($ViServerAddress)'"))
