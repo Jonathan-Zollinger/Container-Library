@@ -87,7 +87,7 @@ function Join-Vlab {
         Write-Verbose "Importing credentials from `"$($VlabCredentialsFilePath)`""
         $Credentials = Import-Clixml $VlabCredentialsFilePath
     }
-    Write-Debug $Credentials
+    Write-Debug "Credentials: $($Credentials.Username) / $($Credentials.Password)"
     $ErrorActionPreference = 'Stop'
     Write-Verbose "Setting Powercliconfiguration's InvalidCertificateAction to 'ignore'..."
     Set-PowerCLIConfiguration -InvalidCertificateAction Ignore -Confirm:$false
