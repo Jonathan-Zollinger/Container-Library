@@ -24,10 +24,10 @@
     Author = 'Jonathan Zollinger'
     
     # Company or vendor of this module
-    CompanyName = 'Micro Focus'
+    # CompanyName = ''
     
     # Copyright statement for this module
-    Copyright = '(c) Micro Focus. All rights reserved.'
+    Copyright = '(c) Jonathan Zollinger'
     
     # Description of the functionality provided by this module
     # Description = ''
