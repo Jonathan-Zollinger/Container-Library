@@ -1,4 +1,8 @@
 
+## Work in Progress
+
+This is a work in progress towards dockerizing a vmware automation utility. See below for contributing
+
 ## Contributing
 
 ### Style Guide
