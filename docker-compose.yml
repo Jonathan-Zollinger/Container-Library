@@ -1,10 +1,12 @@
 version: "3.9"
 services:
-  dev_environment:
+  nvim:
     build: .
     labels:
-      description: "environment with local folder"
+      description: "dev env. with neovim and local folder" 
       authors: "Jonathan Zollinger"
+      image: "nvim"
+      container_name: "nvim"
     tty: true
     stdin_open: true
     volumes:
