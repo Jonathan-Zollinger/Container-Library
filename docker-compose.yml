@@ -1,5 +1,14 @@
 version: "3.9"
 services:
-  app:
-    build: . 
-    image: peanutbutter-unicorn
+  dev_environment:
+    build: .
+    labels:
+      description: "environment with local folder"
+      authors: "Jonathan Zollinger"
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: ./
+        target: /peanutbutter-unicorn
+
