@@ -1,5 +1,16 @@
 version: "3.9"
 services:
-  app:
-    build: . 
-    image: peanutbutter-unicorn
+  nvim:
+    build: .
+    labels:
+      description: "dev env. with neovim and local folder" 
+      authors: "Jonathan Zollinger"
+      image: "nvim"
+      container_name: "nvim"
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: ./
+        target: /peanutbutter-unicorn
+
