@@ -1,8 +1,0 @@
-resource_pool: 'IGReporting'
-vi_server: 'vlabw1vc.nqeng.lab'
-domain: 'dom12345'
-subnet_CIDR: '/22' 
-dns_servers: 
-  - 10.204.2.43
-  - 10.204.2.44
-default_gateway: 10.204.128.1
