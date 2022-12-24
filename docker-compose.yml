@@ -12,4 +12,15 @@ services:
       - type: bind
         source: ./
         target: /peanutbutter-unicorn
-
+  pwsh:
+    build: /powershell/
+    container_name: "pwsh"
+    labels:
+      description: "powershell 7 with powercli and vmware scripts"
+      authors: "Jonathan Zollinger"
+    tty: true
+    stdin_open: true
+    volumes: 
+      - type: bind
+        source: ./powershell
+        target: /my_powershell_modules
