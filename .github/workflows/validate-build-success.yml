@@ -1,0 +1,8 @@
+name: validating docker-compose builds properly
+run-nme: validating changes implemented by ${{ github.actor }} ! 
+on: [push]
+jobs:
+  docker-compose-simply-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose up
