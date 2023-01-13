@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   nvim:
-    build: .
+    build: ./DevelopmentEnvironment/
     container_name: "nvim"
     labels:
       description: "dev env. with neovim and local folder" 
@@ -13,7 +13,7 @@ services:
         source: ./
         target: /peanutbutter-unicorn
   pwsh:
-    build: /powershell/
+    build: ./powershell/
     container_name: "pwsh"
     labels:
       description: "powershell 7 with powercli and vmware scripts"
