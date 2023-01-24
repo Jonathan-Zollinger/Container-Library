@@ -24,7 +24,7 @@ services:
     build:
       context: ./tomcat/
       args:
-        PKG_DEPS: "unzip git wget binutils net-tools man"
+        PKG_DEPS: "unzip git wget curl dirmngr gnupg2 binutils net-tools man ca-certificates"
     image: 'tomcat7.9-ubi8.4'
     container_name: 'tomcat'
     labels:
