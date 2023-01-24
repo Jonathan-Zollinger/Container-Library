@@ -8,10 +8,6 @@ services:
       authors: "Jonathan Zollinger"
     tty: true
     stdin_open: true
-    volumes:
-      - type: bind
-        source: ./
-        target: /peanutbutter-unicorn
   pwsh:
     build: ./powershell/
     container_name: "pwsh"
@@ -24,3 +20,13 @@ services:
       - type: bind
         source: ./powershell
         target: /my_powershell_modules
+  tomcat:
+    build: ./tomcat/
+    image: 'tomcat7.9-ubi8.4'
+    container_name: 'tomcat7.9-ubi8.4'
+    labels:
+      description: "tomcat configured after micro focus' standard configuration"
+      authors: "Jonathan Zollinger"
+    tty: true
+    stdin_open: true
+
