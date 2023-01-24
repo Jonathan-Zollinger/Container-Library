@@ -21,7 +21,10 @@ services:
         source: ./powershell
         target: /my_powershell_modules
   tomcat:
-    build: ./tomcat/
+    build:
+      context: ./tomcat/
+      args:
+        PKG_DEPS: "unzip git wget binutils net-tools man"
     image: 'tomcat7.9-ubi8.4'
     container_name: 'tomcat7.9-ubi8.4'
     labels:
@@ -29,4 +32,5 @@ services:
       authors: "Jonathan Zollinger"
     tty: true
     stdin_open: true
+
 
