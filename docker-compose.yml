@@ -32,5 +32,9 @@ services:
       authors: "Jonathan Zollinger"
     tty: true
     stdin_open: true
-
-
+  tube:
+    image: prologic/tube
+    volumes:
+      - $HOME/Videos/
+    ports:
+      - 8000:8000
