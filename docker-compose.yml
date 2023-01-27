@@ -28,13 +28,11 @@ services:
     image: 'tomcat7.9-ubi8.4'
     container_name: 'tomcat'
     labels:
-      description: "tomcat configured after micro focus' standard configuration"
+      description: "tomcat 7.9 on ubi8.4 configured similar to Mico Focus' standard configuration"
       authors: "Jonathan Zollinger"
     tty: true
     stdin_open: true
   tube:
     image: prologic/tube
-    volumes:
-      - $HOME/Videos/
     ports:
       - 8000:8000
