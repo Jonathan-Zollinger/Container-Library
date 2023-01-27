@@ -26,7 +26,7 @@ services:
     build:
       context: ./RHEL/
       args: 
-        PKG_DEPS: "unzip git wget curl dirmngr gnupg2 binutils net-tools man glow skate gum ca-certificates"
+        PKG_DEPS: "unzip git wget curl dirmngr gnupg2 binutils net-tools glow skate gum man ca-certificates vim-enhanced policycoreutils-python-utils.noarch"
     tty: true
     stdin_open: true
   tomcat:
