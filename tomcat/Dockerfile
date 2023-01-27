@@ -9,11 +9,14 @@ RUN echo 'set -g default-terminal "screen-256color"' >> ~/.tmux.conf
 RUN yum install -y ${PKG_DEPS} && yum update -y
 
 RUN curl -sS https://starship.rs/install.sh | sh -s -- --yes
-RUN echo 'eval "$(starship init bash)"' | tee ~/.bashrc
+RUN mkdir ~/.config/
+RUN wget -L https://raw.githubusercontent.com/Jonathan-Zollinger/PeanutButter-Unicorn/main/config-linux/starship.toml -o ~/.config/starship.toml -o ~/.config/starship.toml
+RUN echo 'eval "$(starship init bash)"' | tee -a ~/.bashrc
+RUN echo "alias ls='ls --color'" | tee -a ~/.bashrc
 
 WORKDIR /opt/netiq/idm/apps/Tomcat
 COPY . .
-RUN [[ "$(dir)" =~ "jdk8" ]] && echo "jdk 8 present, alternate tarball is not produced" || wget ${ZULU_JDK_TARBALL_URI}
+RUN [[ "$(ls)"=~"jdk8" ]] && echo "jdk 8 present, alternate tarball is not produced" || wget ${ZULU_JDK_TARBALL_URI}
 
 
 
