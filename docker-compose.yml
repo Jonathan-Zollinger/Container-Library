@@ -2,6 +2,7 @@ version: "3.9"
 services:
   nvim:
     build: ./DevelopmentEnvironment/
+    image: "jzollinger/nvim:latest"
     container_name: "nvim"
     labels:
       description: "dev env. with neovim and local folder" 
@@ -10,6 +11,7 @@ services:
     stdin_open: true
   pwsh:
     build: ./powershell/
+    image: "jzollinger/powercli-latest"
     container_name: "pwsh"
     labels:
       description: "powershell 7 with powercli and vmware scripts"
@@ -21,7 +23,7 @@ services:
         source: ./powershell
         target: /my_powershell_modules
   rhel:
-    image: "kaptainhook/rhel8:8.4"
+    image: "jzollinger/rhel8:8.4"
     container_name: "rhel8"
     build:
       context: ./RHEL/
@@ -29,20 +31,20 @@ services:
         PKG_DEPS: "unzip git wget curl dirmngr gnupg2 binutils net-tools glow skate gum man ca-certificates vim-enhanced policycoreutils-python-utils.noarch"
     tty: true
     stdin_open: true
-  tomcat:
-    build:
-      context: ./tomcat/
-      args:        
-        TOMCAT_TARBALL_URI: "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.90/bin/apache-tomcat-7.0.90.tar.gz"
-        ZULU_JDK_TARBALL_URI: "https://cdn.azul.com/zulu/bin/zulu8.68.0.21-ca-jdk8.0.362-linux_x64.tar.gz"
-    image: "tomcat7.9-ubi8.4"
-    container_name: "tomcat"
-    labels:
-      description: "tomcat 7.9 on ubi8.4 configured similar to Mico Focus' standard configuration"
-      authors: "Jonathan Zollinger"
-    tty: true
-    stdin_open: true
-  tube:
-    image: prologic/tube
-    ports:
-      - 8000:8000
+  # tomcat:
+  #   build:
+  #     context: ./tomcat/
+  #     args:        
+  #       TOMCAT_TARBALL_URI: "https://archive.apache.org/dist/tomcat/tomcat-7/v7.0.90/bin/apache-tomcat-7.0.90.tar.gz"
+  #       ZULU_JDK_TARBALL_URI: "https://cdn.azul.com/zulu/bin/zulu8.68.0.21-ca-jdk8.0.362-linux_x64.tar.gz"
+  #   image: "tomcat7.9-ubi8.4"
+  #   container_name: "tomcat"
+  #   labels:
+  #     description: "tomcat 7.9 on ubi8.4 configured similar to Mico Focus' standard configuration"
+  #     authors: "Jonathan Zollinger"
+  #   tty: true
+  #   stdin_open: true
+  # tube:
+  #   image: prologic/tube
+  #   ports:
+  #     - 8000:8000
