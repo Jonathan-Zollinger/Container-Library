@@ -21,8 +21,8 @@ services:
         source: ./powershell
         target: /my_powershell_modules
   rhel:
-    image: "redhat-8.4"
-    container_name: "rhel"
+    image: "kaptainhook/rhel8:8.4"
+    container_name: "rhel8"
     build:
       context: ./RHEL/
       args: 
