@@ -1,7 +1,4 @@
-
-## Work in Progress
-
-This is a work in progress towards dockerizing a collection of terminal configurations and libraries. See below for contributing
+[![Build](https://github.com/Jonathan-Zollinger/PeanutButter-Unicorn/actions/workflows/validate-build.yml/badge.svg)](https://github.com/Jonathan-Zollinger/PeanutButter-Unicorn/actions/workflows/validate-build.yml) &ensp; &ensp; [![Publish Docker Images](https://github.com/Jonathan-Zollinger/PeanutButter-Unicorn/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Jonathan-Zollinger/PeanutButter-Unicorn/actions/workflows/docker-image.yml)
 
 ## Contributing
 
