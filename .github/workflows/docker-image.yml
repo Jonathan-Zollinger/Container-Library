@@ -8,6 +8,16 @@ jobs:
   if_merged:
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - imageName: rhel8
+            version: 8.4
+          - imageName: powercli
+            version: latest
+          - imageName: nvim
+            version: latest
     steps:
     - run: |
         echo 'The PR was merged'
@@ -19,6 +29,5 @@ jobs:
     - uses: actions/checkout@v3
     - name: Build the Docker image and push all images
       run: |
-        docker system prune -a -f
-        docker-compose up -d --build
-        docker push --all-tags
+        docker-compose up ${{}} -d --build
+        docker push jzollinger/${{matrix.imageName}}:${{matrix.version}}
