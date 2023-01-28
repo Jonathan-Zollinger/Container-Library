@@ -1,4 +1,4 @@
-name: validating docker-compose builds properly
+name: validate docker images build successfully
 run-name: validating changes implemented by ${{ github.actor }} ! 
 on:
   pull_request:
@@ -8,4 +8,6 @@ jobs:
   docker-compose-simply-builds:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v3.3.0
       - run: docker-compose up -d
