@@ -3,7 +3,7 @@ run-name: validating changes proposed by ${{ github.actor }} in pull request \#$
 on:
   pull_request:
     types: [opened, reopened]
-    branches: main
+    branches: [ main ]
 jobs:
   docker-compose-simply-builds:
     runs-on: ubuntu-latest
