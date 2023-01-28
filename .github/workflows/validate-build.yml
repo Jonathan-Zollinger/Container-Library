@@ -1,0 +1,11 @@
+name: validating docker-compose builds properly
+run-name: validating changes implemented by ${{ github.actor }} ! 
+on:
+  pull_request:
+    types: [opened, reopened]
+    branches: main
+jobs:
+  docker-compose-simply-builds:
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker-compose up -d
