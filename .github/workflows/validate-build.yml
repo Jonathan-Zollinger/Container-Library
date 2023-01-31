@@ -1,9 +1,9 @@
 name: Build
-run-name: validating changes proposed by ${{ github.actor }} in pull request \#${{ github.event.pull_request.id }} \'{{ github.event.pull_request.title }}\'
+run-name: validating changes proposed by ${{ github.actor }} in PR "${{ github.event.pull_request.title }}""
 on:
   pull_request:
     types: [opened, reopened]
-    branches: main
+    branches: [ main ]
 jobs:
   docker-compose-simply-builds:
     runs-on: ubuntu-latest
