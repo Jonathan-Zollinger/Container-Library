@@ -3,6 +3,7 @@ name: Publish Docker Images
 on:
   pull_request:
     branches: [ "main" ]
+    types: [ closed ]
 
 jobs:
   if_merged:
