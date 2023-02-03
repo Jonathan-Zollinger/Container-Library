@@ -1,0 +1,75 @@
+#! /bin/bash
+# jonathan zollinger's logging library
+
+#######################################
+# print error message to STDERR
+# Globals:
+#   None
+# Arguments:
+#   ErrorMessage
+# Examples:
+#   if ! do_something; then
+#     echo_err "Unable to do_something"
+#     exit 1
+#   fi
+# Author: github.com/Jonathan-Zollinger 
+#######################################
+function err() {
+  echo "$@" >&2
+}
+
+function log {
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r script_name="$(basename "$0")"
+  local log="${timestamp} [${level}] [$script_name] ${message}"
+  mkdir -p "$HOME/logs"
+  local -r log_file="$(date \"%b-%d-%y\").log"
+
+  case "$level" in 
+    'INFO' | 'WARN' | 'ERROR')
+      echo "$log" | tee -a "${script_name}.log" 
+      if [[ $level == 'ERROR' ]]; then
+        echo "${script_name} ${message}" >&2
+        exit 1
+      fi
+    ;;
+
+    'DEBUG')
+      gum style --border double --align left --margin "1 1" \
+        --padding "1 2" "${0%/*}##${script_name}" "$(date +\"%s\")" '' \
+        "$( set -o posix ; set )" | tee -a "$HOME/logs/${log_file}.log"
+    ;;
+  esac
+
+  # TODO(Jonathan) test these varying log levels work
+}
+
+# Log the given message at INFO level. All logs are written to stderr with a timestamp.
+function log_info {
+  local -r message="$1"
+  log "INFO" "$message"
+}
+
+# Log the given message at WARN level. All logs are written to stderr with a timestamp.
+function log_warn {
+  local -r message="$1"
+  log "WARN" "$message"
+}
+
+# Log the given message at ERROR level. All logs are written to stderr with a timestamp.
+function log_error {
+  local -r message="$1"
+  log "ERROR" "$message"
+}
+
+function log_debug {
+  local -r message="$1"
+  local -r debug_log_file=$( "$HOME/logs/${0%/*}.log" | tr "/" .)
+  mkdir -p "$HOME/logs/"
+  gum style \
+    --border double --align left --margin "1 1" \
+    --padding "1 2" "$(basename "$0")   $(date +\"%s\")" ''  \
+    "$( set -o posix ; set )" | tee -a "$HOME/logs/${debug_log_file}.log"
+}
