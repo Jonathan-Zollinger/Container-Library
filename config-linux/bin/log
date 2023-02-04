@@ -1,0 +1,97 @@
+#!/bin/bash
+# jonathan zollinger's logging library
+
+##############################################################################
+# print error message to STDERR
+# Globals:
+#   None
+# Arguments:
+#   ErrorMessage
+# Examples:
+#   if ! do_something; then
+#     echo_err "Unable to do_something"
+#     exit 1
+#   fi
+# Author: github.com/Jonathan-Zollinger 
+##############################################################################
+function err() {
+  echo "$@" >&2
+  exit 1
+}
+
+##############################################################################
+# print log message with applicable info to appropriate stream. all logs are 
+# written to the $HOME/logs directory
+#
+# Globals:
+#   LOG_LEVEL: if set to debug, will print debug info to log file
+#
+# Arguments:
+#  - verbosity level (debug, info, warn or error).
+#  - log message, a string.
+#
+# Examples:
+#
+# log the result of pinging google)
+# if ping -c 1 google.com; then
+#   log 'INFO' "It appears you have a working internet connection"
+# else
+#   log 'WARN' "It appears you do not have a working internet connection"
+#
+# Author: github.com/Jonathan-Zollinger 
+##############################################################################
+function log {
+  local -r level="$1"
+  local -r message="$2"
+  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r script_name="$(basename "$0")"
+  local log="${timestamp} [${level}] [${0%/*}##$script_name] ${message}"
+  mkdir -p "$HOME/logs"
+  local -r log_file="$(date \"%b-%d-%y\").log"
+
+  case "${level^^}" in 
+    'INFO' | 'WARN' | 'ERROR')
+      echo "$log" | tee -a "$HOME/logs/${log_file}.log" 
+      if [[ $level == 'ERROR' ]]; then
+        err "${script_name} ${message}"
+      fi
+    ;;
+
+    'DEBUG')
+    if [[ -z $LOG_LEVEL && ${LOG_LEVEL^^} == 'DEBUG'  ]]; then
+      gum style --border double --align left --margin "1 1" \
+        --padding "1 2" "${log}" '' "$(printenv)" \
+        "$( set -o posix ; set )" >> "$HOME/logs/${log_file}.log"
+    fi      
+    ;;
+
+    *)
+      err "log level ${level^^} in log output ${log} doesn't match expected log levels."
+
+  esac
+  # TODO(Jonathan) test these varying log levels work
+}
+
+# Log the given message at INFO level.
+function log_info {
+  local -r message="$1"
+  log "INFO" "$message"
+}
+
+# Log the given message at WARN level.
+function log_warn {
+  local -r message="$1"
+  log "WARN" "$message"
+}
+
+# Log the given message at ERROR level.
+function log_error {
+  local -r message="$1"
+  log "ERROR" "$message"
+}
+
+# Log the given message to the log file. appends a report of all shell and global vars to the message. 
+function log_debug {
+  local -r message="$1"
+  log_debug 'DEBUG'  "$message"
+}
