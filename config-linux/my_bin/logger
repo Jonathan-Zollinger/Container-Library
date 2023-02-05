@@ -1,5 +1,5 @@
 #!/bin/bash
-# jonathan zollinger's logging library
+# jonathan zollinger's logging library. Requires bash 4.2 and gum
 
 ##############################################################################
 # print error message to STDERR
@@ -43,25 +43,37 @@ function err() {
 function log {
   local -r level="$1"
   local -r message="$2"
-  local -r timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  local -r timestamp=$(date +"%b-%d-%y %H:%M:%S")
   local -r script_name="$(basename "$0")"
   local log="${timestamp} [${level}] [${0%/*}##$script_name] ${message}"
-  mkdir -p "$HOME/logs"
-  local -r log_file="$(date \"%b-%d-%y\").log"
+  mkdir -p "${HOME}/logs"
+  local -r log_file="${HOME}/logs/$(date +%b-%d-%y).log"
 
   case "${level^^}" in 
-    'INFO' | 'WARN' | 'ERROR')
-      echo "$log" | tee -a "$HOME/logs/${log_file}.log" 
-      if [[ $level == 'ERROR' ]]; then
-        err "${script_name} ${message}"
+    'ERROR')
+      echo "${log}" >> "${log_file}"
+      err "${log}"
+    ;;
+
+    'WARN')
+      if [[ ${LOG_LEVEL^^} =~ ('DEBUG'|'INFO'|'WARN') ]]; then
+        echo "{{ Color \"3\" \"${log}\" }}" | gum format -t template
       fi
+      echo "${log}" >> "${log_file}"
+    ;;
+
+    'INFO')
+      if [[ ${LOG_LEVEL^^} =~ ('DEBUG'|'INFO') ]]; then
+        echo "{{ Color \"2\" \"${log}\" }}" | gum format -t template
+      fi
+      echo "${log}" >> "${log_file}"
     ;;
 
     'DEBUG')
     if [[ -z $LOG_LEVEL && ${LOG_LEVEL^^} == 'DEBUG'  ]]; then
       gum style --border double --align left --margin "1 1" \
         --padding "1 2" "${log}" '' "$(printenv)" \
-        "$( set -o posix ; set )" >> "$HOME/logs/${log_file}.log"
+        "$( set -o posix ; set )" >> "$HOME/logs/${log_file}"
     fi      
     ;;
 
@@ -74,24 +86,20 @@ function log {
 
 # Log the given message at INFO level.
 function log_info {
-  local -r message="$1"
-  log "INFO" "$message"
+  log 'INFO' "$*"
 }
 
 # Log the given message at WARN level.
 function log_warn {
-  local -r message="$1"
-  log "WARN" "$message"
+  log 'WARN' "$*"
 }
 
 # Log the given message at ERROR level.
 function log_error {
-  local -r message="$1"
-  log "ERROR" "$message"
+  log 'ERROR' "$*"
 }
 
 # Log the given message to the log file. appends a report of all shell and global vars to the message. 
 function log_debug {
-  local -r message="$1"
-  log_debug 'DEBUG'  "$message"
+  log 'DEBUG' "$*"
 }
